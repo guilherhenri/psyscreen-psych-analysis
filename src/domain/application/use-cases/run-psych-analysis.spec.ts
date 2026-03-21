@@ -86,4 +86,35 @@ describe('Run Psych Analysis Use-case', () => {
     expect(inMemoryPsychAnalysesRepository.items).toHaveLength(1)
     expect(model.generate).toHaveBeenCalledTimes(1)
   })
+
+  it('should mark analysis as failed when model throws', async () => {
+    model = {
+      generate: jest.fn().mockRejectedValue(new Error('Gemini error')),
+    }
+    sut = new RunPsychAnalysis(
+      inMemoryPsychAnalysesRepository,
+      model,
+      promptBuilder
+    )
+
+    const response = await sut.execute({
+      candidateId: 'candidate-1',
+      profileId: 'profile-2',
+      summary: 'summary',
+      experiences: [],
+      education: [],
+      skills: [],
+      languages: [],
+      certifications: [],
+      rawText: 'raw text',
+    })
+
+    expect(response.isRight()).toBeTruthy()
+    expect(inMemoryPsychAnalysesRepository.items).toHaveLength(1)
+    expect(inMemoryPsychAnalysesRepository.items[0]).toMatchObject({
+      props: {
+        status: PsychAnalysisStatus.FAILED,
+      },
+    })
+  })
 })

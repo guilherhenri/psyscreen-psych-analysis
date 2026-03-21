@@ -5,13 +5,13 @@ import { PsychAnalysisPromptBuilder } from '@/domain/application/services/psych-
 import { RunPsychAnalysis } from '@/domain/application/use-cases/run-psych-analysis'
 
 import { DatabaseModule } from '../database/database.module'
+import { MessagingModule } from '../messaging/messaging.module'
 import { DefaultPsychAnalysisPromptBuilderService } from '../services/default-psych-analysis-prompt-builder.service'
 import { GeminiPsychAnalysisService } from '../services/gemini-psych-analysis.service'
-import { ServicesModule } from '../services/services.module'
 import { CandidateProfileCreatedEventHandler } from './candidate-profile-created-event.handler'
 
 @Module({
-  imports: [DatabaseModule, ServicesModule],
+  imports: [DatabaseModule, MessagingModule],
   controllers: [CandidateProfileCreatedEventHandler],
   providers: [
     RunPsychAnalysis,

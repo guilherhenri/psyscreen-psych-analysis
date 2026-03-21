@@ -15,6 +15,7 @@ import type { Repository } from 'typeorm'
 
 import { PsychAnalysisModel } from '@/domain/application/services/psych-analysis-model'
 import { PsychAnalysisStatus } from '@/domain/enterprise/entities/psych-analysis'
+import { EventPublisher } from '@/core/ports/event-publisher'
 import { AppModule } from '@/infra/app.module'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { PsychAnalysis } from '@/infra/database/entities/psych-analysis.entity'
@@ -36,6 +37,11 @@ describe('CandidateProfileCreatedEventHandler (Integration)', () => {
     })
       .overrideProvider(PsychAnalysisModel)
       .useClass(FakePsychAnalysisModel)
+      .overrideProvider(EventPublisher)
+      .useValue({
+        publish: jest.fn(),
+        publishBatch: jest.fn(),
+      })
       .overrideProvider('PSYCH_ANALYSIS_SERVICE')
       .useFactory({
         factory: () => createPsychAnalysisTestClient(brokers),
