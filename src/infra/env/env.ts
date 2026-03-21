@@ -16,6 +16,11 @@ export const envSchema = z.object({
   KAFKA_CLIENT_ID: z.string().default('psych-analysis'),
   KAFKA_CONSUMER_GROUP: z.string().default('psych-analysis-consumer'),
   KAFKA_RETRY_COUNT: z.coerce.number().default(8),
+
+  GEMINI_API_KEY: z.string(),
+  GEMINI_MODEL: z.string().default('gemini-2.5-flash'),
+  GEMINI_TEMPERATURE: z.coerce.number().default(0.4),
+  GEMINI_MAX_OUTPUT_TOKENS: z.coerce.number().default(1024),
 })
 
 export type Env = z.infer<typeof envSchema>

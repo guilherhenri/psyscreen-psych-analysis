@@ -54,6 +54,10 @@ DATABASE_NAME=psych_analysis
 DATABASE_PORT=5454
 KAFKAJS_NO_PARTITIONER_WARNING=1
 KAFKA_BROKER=localhost:9092
+GEMINI_API_KEY=your-gemini-api-key
+GEMINI_MODEL=gemini-2.5-flash
+GEMINI_TEMPERATURE=0.4
+GEMINI_MAX_OUTPUT_TOKENS=1024
 ```
 
 **3. Start Dependencies (PostgreSQL + Kafka)**
@@ -192,6 +196,10 @@ src/
 | `KAFKA_CONSUMER_GROUP`           | No       | psych-analysis-consumer | Kafka consumer group      |
 | `KAFKA_RETRY_COUNT`              | No       | 8                       | Kafka retry count         |
 | `KAFKAJS_NO_PARTITIONER_WARNING` | No       | 1                       | Suppress KafkaJS warnings |
+| `GEMINI_API_KEY`                 | Yes      | -                       | Gemini API key            |
+| `GEMINI_MODEL`                   | No       | gemini-2.5-flash        | Gemini model name         |
+| `GEMINI_TEMPERATURE`             | No       | 0.4                     | Gemini temperature        |
+| `GEMINI_MAX_OUTPUT_TOKENS`       | No       | 1024                    | Max output tokens         |
 
 ---
 

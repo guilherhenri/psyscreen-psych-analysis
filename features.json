@@ -1,0 +1,93 @@
+[
+  {
+    "id": 1,
+    "category": "functional",
+    "description": "Consume CandidateProfile.Created events and start analysis",
+    "steps": [
+      "Receive candidates.event.profile_created payload",
+      "Validate payload shape and required fields",
+      "Check if analysis already exists for profileId",
+      "Create pending analysis record",
+      "Persist candidateId/profileId linkage"
+    ],
+    "passes": true
+  },
+  {
+    "id": 2,
+    "category": "functional",
+    "description": "Generate psych analysis with Gemini",
+    "steps": [
+      "Build prompt using structured profile data",
+      "Call Gemini API with configured model",
+      "Parse response into score and report",
+      "Handle timeouts and malformed responses",
+      "Normalize score to 0-100"
+    ],
+    "passes": true
+  },
+  {
+    "id": 3,
+    "category": "functional",
+    "description": "Persist analysis results and update status",
+    "steps": [
+      "Update analysis status to completed",
+      "Store score and report in database",
+      "Record failure status when analysis fails",
+      "Keep updatedAt timestamps in sync",
+      "Avoid overwriting completed analysis unintentionally"
+    ],
+    "passes": false
+  },
+  {
+    "id": 4,
+    "category": "functional",
+    "description": "Publish PsychAnalysis.Completed event",
+    "steps": [
+      "Build event payload with candidateId/profileId/score/report",
+      "Publish to Kafka topic psych-analysis.event.completed",
+      "Ensure publish is idempotent for retries",
+      "Handle publish failures gracefully",
+      "Keep topic contract aligned with shared contracts"
+    ],
+    "passes": false
+  },
+  {
+    "id": 5,
+    "category": "functional",
+    "description": "Support retries and idempotency",
+    "steps": [
+      "Skip processing when analysis already completed",
+      "Allow rerun for failed analyses when re-triggered",
+      "Protect against duplicate events",
+      "Ensure database uniqueness on profileId",
+      "Avoid duplicate event publication"
+    ],
+    "passes": false
+  },
+  {
+    "id": 6,
+    "category": "technical",
+    "description": "Configure Gemini credentials and runtime env",
+    "steps": [
+      "Add GEMINI_API_KEY to env schema",
+      "Add GEMINI_MODEL and temperature defaults",
+      "Validate env on bootstrap",
+      "Document variables in README",
+      "Add .env.example entries"
+    ],
+    "passes": false
+  },
+  {
+    "id": 7,
+    "category": "quality",
+    "description": "Add unit and integration test coverage",
+    "steps": [
+      "Unit test analysis prompt builder",
+      "Unit test Gemini client integration wrapper",
+      "Integration test handler end-to-end",
+      "Assert database updates for completed status",
+      "Assert event publication payload"
+    ],
+    "passes": false
+  }
+]

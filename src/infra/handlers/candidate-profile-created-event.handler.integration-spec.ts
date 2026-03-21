@@ -8,10 +8,13 @@ import {
 import { createPsychAnalysisTestClient } from '@test/config/clients.config'
 import { getMicroserviceConfig } from '@test/config/microservice.config'
 import { kafkaSetup } from '@test/helpers/kafka-setup'
+import { FakePsychAnalysisModel } from '@test/services/fake-psych-analysis-model'
 import type { StartedRedpandaContainer } from '@testcontainers/redpanda'
 import { firstValueFrom } from 'rxjs'
 import type { Repository } from 'typeorm'
 
+import { PsychAnalysisModel } from '@/domain/application/services/psych-analysis-model'
+import { PsychAnalysisStatus } from '@/domain/enterprise/entities/psych-analysis'
 import { AppModule } from '@/infra/app.module'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { PsychAnalysis } from '@/infra/database/entities/psych-analysis.entity'
@@ -31,6 +34,8 @@ describe('CandidateProfileCreatedEventHandler (Integration)', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
     })
+      .overrideProvider(PsychAnalysisModel)
+      .useClass(FakePsychAnalysisModel)
       .overrideProvider('PSYCH_ANALYSIS_SERVICE')
       .useFactory({
         factory: () => createPsychAnalysisTestClient(brokers),
@@ -65,7 +70,7 @@ describe('CandidateProfileCreatedEventHandler (Integration)', () => {
     await analysesRepository.clear()
   })
 
-  it('should create a pending psych analysis record', async () => {
+  it('should create a completed psych analysis record', async () => {
     const event: CandidateProfileCreatedEvent = {
       candidateId: '9b7b7b2e-31d5-4c47-8cc1-642a0c72d8a1',
       profileId: '6c6c2f4d-6e2c-4f6b-9f6a-1a0b1b7d6cfe',
@@ -84,26 +89,30 @@ describe('CandidateProfileCreatedEventHandler (Integration)', () => {
 
     const record = await waitForAnalysis(
       analysesRepository,
-      '6c6c2f4d-6e2c-4f6b-9f6a-1a0b1b7d6cfe'
+      '6c6c2f4d-6e2c-4f6b-9f6a-1a0b1b7d6cfe',
+      PsychAnalysisStatus.COMPLETED
     )
 
     expect(record).toBeDefined()
     expect(record?.candidateId).toBe('9b7b7b2e-31d5-4c47-8cc1-642a0c72d8a1')
     expect(record?.profileId).toBe('6c6c2f4d-6e2c-4f6b-9f6a-1a0b1b7d6cfe')
-    expect(record?.status).toBe('pending')
+    expect(record?.status).toBe('completed')
+    expect(record?.score).toBe(82)
+    expect(record?.report).toBe('Strong communication and leadership signals.')
   })
 })
 
 async function waitForAnalysis(
   repository: Repository<PsychAnalysis>,
-  profileId: string
+  profileId: string,
+  status?: PsychAnalysis['status']
 ): Promise<PsychAnalysis | null> {
   const deadline = Date.now() + 5000
 
   while (Date.now() < deadline) {
     const record = await repository.findOne({ where: { profileId } })
 
-    if (record) {
+    if (record && (!status || record.status === status)) {
       return record
     }
 
