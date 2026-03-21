@@ -1,0 +1,23 @@
+name: psyscreen-psych-analysis-test
+
+services:
+  psych-analysis-pg-test:
+    image: postgres:17-alpine
+    container_name: psych-analysis-pg-test
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-psych_analysis}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-psychanalysis123}
+      POSTGRES_DB: ${DATABASE_NAME:-psych_analysis}
+    ports:
+      - '${DATABASE_PORT:-5483}:5432'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DATABASE_USER:-psych_analysis} -d ${DATABASE_NAME:-psych_analysis}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    pull_policy: if_not_present

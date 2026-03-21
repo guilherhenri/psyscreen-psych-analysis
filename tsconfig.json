@@ -1,0 +1,12 @@
+{
+  "extends": ["@psyscreen/config/tsconfig/nest"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@test/*": ["test/*"]
+    },
+    "types": ["jest"]
+  }
+}

@@ -1,0 +1,49 @@
+name: psyscreen-psych-analysis
+
+services:
+  psych-analysis-pg:
+    image: postgres:17-alpine
+    container_name: psych-analysis-pg
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-psych_analysis}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-psychanalysis123}
+      POSTGRES_DB: ${DATABASE_NAME:-psych_analysis}
+    ports:
+      - '${DATABASE_PORT:-5432}:5432'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DATABASE_USER:-psych_analysis} -d ${DATABASE_NAME:-psych_analysis}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    pull_policy: if_not_present
+
+  psych-analysis-zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: psych-analysis-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  psych-analysis-kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: psych-analysis-kafka
+    ports:
+      - '9092:9092'
+    depends_on:
+      - psych-analysis-zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'psych-analysis-zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://psych-analysis-kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
