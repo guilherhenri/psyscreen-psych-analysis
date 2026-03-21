@@ -13,9 +13,9 @@ import type { StartedRedpandaContainer } from '@testcontainers/redpanda'
 import { firstValueFrom } from 'rxjs'
 import type { Repository } from 'typeorm'
 
+import { EventPublisher } from '@/core/ports/event-publisher'
 import { PsychAnalysisModel } from '@/domain/application/services/psych-analysis-model'
 import { PsychAnalysisStatus } from '@/domain/enterprise/entities/psych-analysis'
-import { EventPublisher } from '@/core/ports/event-publisher'
 import { AppModule } from '@/infra/app.module'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { PsychAnalysis } from '@/infra/database/entities/psych-analysis.entity'
@@ -27,6 +27,7 @@ describe('CandidateProfileCreatedEventHandler (Integration)', () => {
   let typeorm: TypeOrmService
   let analysesRepository: Repository<PsychAnalysis>
   let kafkaContainer: StartedRedpandaContainer
+  let publishBatchSpy: jest.Mock
 
   beforeAll(async () => {
     const { container, brokers } = await kafkaSetup()
@@ -54,6 +55,7 @@ describe('CandidateProfileCreatedEventHandler (Integration)', () => {
 
     typeorm = moduleRef.get(TypeOrmService)
     client = moduleRef.get('PSYCH_ANALYSIS_SERVICE')
+    publishBatchSpy = moduleRef.get(EventPublisher).publishBatch as jest.Mock
 
     analysesRepository = typeorm.getRepository(PsychAnalysis)
 
@@ -105,6 +107,7 @@ describe('CandidateProfileCreatedEventHandler (Integration)', () => {
     expect(record?.status).toBe('completed')
     expect(record?.score).toBe(82)
     expect(record?.report).toBe('Strong communication and leadership signals.')
+    expect(publishBatchSpy).toHaveBeenCalledTimes(1)
   })
 })
 

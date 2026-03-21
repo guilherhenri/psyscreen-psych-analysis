@@ -1,5 +1,8 @@
-import { PsychAnalysis, PsychAnalysisStatus } from '@/domain/enterprise/entities/psych-analysis'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import {
+  PsychAnalysis,
+  PsychAnalysisStatus,
+} from '@/domain/enterprise/entities/psych-analysis'
 
 export function makePsychAnalysis(
   override?: Partial<{
@@ -19,7 +22,8 @@ export function makePsychAnalysis(
       profileId: 'profile-1',
       status: PsychAnalysisStatus.COMPLETED,
       score: 85,
-      report: 'Strong psychological profile with excellent leadership potential',
+      report:
+        'Strong psychological profile with excellent leadership potential',
       createdAt: new Date(),
       ...override,
     },

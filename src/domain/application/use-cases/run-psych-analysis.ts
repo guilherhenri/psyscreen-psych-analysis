@@ -41,6 +41,10 @@ export class RunPsychAnalysis {
       return right(null)
     }
 
+    if (existing && existing.status === PsychAnalysisStatus.PENDING) {
+      return right(null)
+    }
+
     const analysis =
       existing ??
       PsychAnalysis.create({
@@ -53,6 +57,12 @@ export class RunPsychAnalysis {
 
     if (!existing) {
       await this.repository.create(analysis)
+    }
+
+    if (analysis.status !== PsychAnalysisStatus.PENDING) {
+      analysis.updateResult({ status: PsychAnalysisStatus.PENDING })
+
+      await this.repository.save(analysis)
     }
 
     try {

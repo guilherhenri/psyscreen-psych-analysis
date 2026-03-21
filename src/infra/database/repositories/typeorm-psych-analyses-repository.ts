@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
+import { DomainEvents } from '@/core/events/domain-events'
 import { PsychAnalysesRepository } from '@/domain/application/repositories/psych-analyses-repository'
 import type { PsychAnalysis } from '@/domain/enterprise/entities/psych-analysis'
-import { DomainEvents } from '@/core/events/domain-events'
 
 import { PsychAnalysis as TypeOrmPsychAnalysis } from '../entities/psych-analysis.entity'
 import { TypeOrmPsychAnalysisMapper } from '../mappers/typeorm-psych-analysis-mapper'
