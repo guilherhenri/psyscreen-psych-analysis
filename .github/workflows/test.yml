@@ -37,6 +37,10 @@ jobs:
       DATABASE_PASSWORD: psychanalysis123
       DATABASE_NAME: psych_analysis
       DATABASE_PORT: 5483
+      GEMINI_API_KEY: test-key
+      GEMINI_MODEL: gemini-2.5-flash
+      GEMINI_TEMPERATURE: 0.4
+      GEMINI_MAX_OUTPUT_TOKENS: 256
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
