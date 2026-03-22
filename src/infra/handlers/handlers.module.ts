@@ -9,10 +9,14 @@ import { MessagingModule } from '../messaging/messaging.module'
 import { DefaultPsychAnalysisPromptBuilderService } from '../services/default-psych-analysis-prompt-builder.service'
 import { GeminiPsychAnalysisService } from '../services/gemini-psych-analysis.service'
 import { CandidateProfileCreatedEventHandler } from './candidate-profile-created-event.handler'
+import { VacancyCriteriaUpdatedEventHandler } from './vacancy-criteria-updated-event.handler'
 
 @Module({
   imports: [DatabaseModule, MessagingModule],
-  controllers: [CandidateProfileCreatedEventHandler],
+  controllers: [
+    CandidateProfileCreatedEventHandler,
+    VacancyCriteriaUpdatedEventHandler,
+  ],
   providers: [
     RunPsychAnalysis,
     {

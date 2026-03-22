@@ -10,6 +10,10 @@ export class InMemoryPsychAnalysesRepository implements PsychAnalysesRepository 
     return item ?? null
   }
 
+  async findByVacancyId(vacancyId: string): Promise<PsychAnalysis[]> {
+    return this.items.filter((analysis) => analysis.vacancyId === vacancyId)
+  }
+
   async create(analysis: PsychAnalysis): Promise<void> {
     this.items.push(analysis)
   }

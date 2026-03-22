@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { type Either, right } from '@/core/either'
 import {
   PsychAnalysis,
+  type PsychAnalysisProfileSnapshot,
   PsychAnalysisStatus,
 } from '@/domain/enterprise/entities/psych-analysis'
 
@@ -13,6 +14,8 @@ import { PsychAnalysisPromptBuilder } from '../services/psych-analysis-prompt-bu
 interface RunPsychAnalysisRequest {
   candidateId: string
   profileId: string
+  vacancyId?: string | null
+  criteriaVersion?: number | null
   summary: string | null
   experiences: string[]
   education: string[]
@@ -37,12 +40,44 @@ export class RunPsychAnalysis {
   ): Promise<RunPsychAnalysisResponse> {
     const existing = await this.repository.findByProfileId(request.profileId)
 
-    if (existing && existing.status === PsychAnalysisStatus.COMPLETED) {
-      return right(null)
+    const profileSnapshot: PsychAnalysisProfileSnapshot = {
+      summary: request.summary,
+      experiences: request.experiences,
+      education: request.education,
+      skills: request.skills,
+      languages: request.languages,
+      certifications: request.certifications,
+      rawText: request.rawText,
     }
 
-    if (existing && existing.status === PsychAnalysisStatus.PENDING) {
-      return right(null)
+    const shouldReprocessForCriteria =
+      request.criteriaVersion !== undefined &&
+      (existing?.criteriaVersion ?? null) !== request.criteriaVersion
+
+    if (!shouldReprocessForCriteria) {
+      if (existing && existing.status === PsychAnalysisStatus.COMPLETED) {
+        existing.updateContext({
+          vacancyId: request.vacancyId,
+          criteriaVersion: request.criteriaVersion,
+        })
+        existing.updateProfileSnapshot(profileSnapshot)
+
+        await this.repository.save(existing)
+
+        return right(null)
+      }
+
+      if (existing && existing.status === PsychAnalysisStatus.PENDING) {
+        existing.updateContext({
+          vacancyId: request.vacancyId,
+          criteriaVersion: request.criteriaVersion,
+        })
+        existing.updateProfileSnapshot(profileSnapshot)
+
+        await this.repository.save(existing)
+
+        return right(null)
+      }
     }
 
     const analysis =
@@ -50,6 +85,9 @@ export class RunPsychAnalysis {
       PsychAnalysis.create({
         candidateId: request.candidateId,
         profileId: request.profileId,
+        vacancyId: request.vacancyId ?? null,
+        criteriaVersion: request.criteriaVersion ?? null,
+        profileSnapshot,
         status: PsychAnalysisStatus.PENDING,
         score: null,
         report: null,
@@ -57,6 +95,19 @@ export class RunPsychAnalysis {
 
     if (!existing) {
       await this.repository.create(analysis)
+    } else if (
+      request.vacancyId !== undefined ||
+      request.criteriaVersion !== undefined
+    ) {
+      analysis.updateContext({
+        vacancyId: request.vacancyId,
+        criteriaVersion: request.criteriaVersion,
+      })
+      analysis.updateProfileSnapshot(profileSnapshot)
+      await this.repository.save(analysis)
+    } else {
+      analysis.updateProfileSnapshot(profileSnapshot)
+      await this.repository.save(analysis)
     }
 
     if (analysis.status !== PsychAnalysisStatus.PENDING) {
@@ -67,13 +118,13 @@ export class RunPsychAnalysis {
 
     try {
       const prompt = this.promptBuilder.build({
-        summary: request.summary,
-        experiences: request.experiences,
-        education: request.education,
-        skills: request.skills,
-        languages: request.languages,
-        certifications: request.certifications,
-        rawText: request.rawText,
+        summary: profileSnapshot.summary,
+        experiences: profileSnapshot.experiences,
+        education: profileSnapshot.education,
+        skills: profileSnapshot.skills,
+        languages: profileSnapshot.languages,
+        certifications: profileSnapshot.certifications,
+        rawText: profileSnapshot.rawText,
       })
 
       const result = await this.model.generate(prompt)

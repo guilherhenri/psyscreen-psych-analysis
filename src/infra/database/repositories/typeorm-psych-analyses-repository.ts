@@ -28,6 +28,14 @@ export class TypeOrmPsychAnalysesRepository implements PsychAnalysesRepository {
     return TypeOrmPsychAnalysisMapper.toDomain(analysis)
   }
 
+  async findByVacancyId(vacancyId: string): Promise<PsychAnalysis[]> {
+    const analyses = await this.repository.find({
+      where: { vacancyId },
+    })
+
+    return analyses.map(TypeOrmPsychAnalysisMapper.toDomain)
+  }
+
   async create(analysis: PsychAnalysis): Promise<void> {
     await this.repository.save(TypeOrmPsychAnalysisMapper.toTypeOrm(analysis))
     await DomainEvents.dispatchEventsForAggregate(analysis.id)

@@ -29,8 +29,8 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.28(pg@8.20.0))
       '@psyscreen/contracts':
-        specifier: ^1.1.5
-        version: 1.1.5(@nestjs/swagger@11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2))(class-transformer@0.5.1)(class-validator@0.14.4)(typescript@5.9.3)
+        specifier: ^1.1.10
+        version: 1.1.10(@nestjs/swagger@11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2))(class-transformer@0.5.1)(class-validator@0.14.4)(typescript@5.9.3)
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -1731,10 +1731,10 @@ packages:
       prettier: ^3.4.2
       typescript: ^5.9.3
 
-  '@psyscreen/contracts@1.1.5':
+  '@psyscreen/contracts@1.1.10':
     resolution:
       {
-        integrity: sha512-Qj+mt2l+qixdcTXbHJJVbPYq0J1yBL5otlOoEirMnFV6BrkSBtDfyKHTTz01wcTWSswocm4aH/qQcvRwmSF40Q==,
+        integrity: sha512-rCeCDN+LUQMvmcKql4ltl41ZZNkhPBu/demqnNR021O7k2Kk8sioPuaBtebAW8TFKerDvDvw62t2Z2+Ki3b1jw==,
       }
     peerDependencies:
       '@nestjs/swagger': ^11.2.3
@@ -8006,7 +8006,7 @@ snapshots:
       - '@types/eslint'
       - supports-color
 
-  '@psyscreen/contracts@1.1.5(@nestjs/swagger@11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2))(class-transformer@0.5.1)(class-validator@0.14.4)(typescript@5.9.3)':
+  '@psyscreen/contracts@1.1.10(@nestjs/swagger@11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2))(class-transformer@0.5.1)(class-validator@0.14.4)(typescript@5.9.3)':
     dependencies:
       '@nestjs/swagger': 11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)
       class-transformer: 0.5.1

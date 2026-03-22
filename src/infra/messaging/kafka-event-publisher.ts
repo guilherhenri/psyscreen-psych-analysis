@@ -77,6 +77,8 @@ export class KafkaEventPublisher implements EventPublisher {
       const payload: PsychAnalysisCompletedPayload = {
         candidateId: analysis.candidateId,
         profileId: analysis.profileId,
+        vacancyId: analysis.vacancyId ?? null,
+        criteriaVersion: analysis.criteriaVersion ?? null,
         score: analysis.score ?? 0,
         report: analysis.report ?? '',
       }

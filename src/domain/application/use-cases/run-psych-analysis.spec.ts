@@ -120,6 +120,46 @@ describe('Run Psych Analysis Use-case', () => {
     expect(model.generate).toHaveBeenCalledTimes(1)
   })
 
+  it('should reprocess when criteria version changes', async () => {
+    await sut.execute({
+      candidateId: 'candidate-1',
+      profileId: 'profile-1',
+      vacancyId: 'vacancy-1',
+      criteriaVersion: 1,
+      summary: 'summary',
+      experiences: [],
+      education: [],
+      skills: [],
+      languages: [],
+      certifications: [],
+      rawText: 'raw text',
+    })
+
+    const response = await sut.execute({
+      candidateId: 'candidate-1',
+      profileId: 'profile-1',
+      vacancyId: 'vacancy-1',
+      criteriaVersion: 2,
+      summary: 'summary',
+      experiences: [],
+      education: [],
+      skills: [],
+      languages: [],
+      certifications: [],
+      rawText: 'raw text',
+    })
+
+    expect(response.isRight()).toBeTruthy()
+    expect(inMemoryPsychAnalysesRepository.items).toHaveLength(1)
+    expect(inMemoryPsychAnalysesRepository.items[0]).toMatchObject({
+      props: {
+        criteriaVersion: 2,
+        vacancyId: 'vacancy-1',
+      },
+    })
+    expect(model.generate).toHaveBeenCalledTimes(2)
+  })
+
   it('should retry when analysis failed', async () => {
     model = {
       generate: jest

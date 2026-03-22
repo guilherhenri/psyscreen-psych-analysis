@@ -7,7 +7,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
-import { PsychAnalysisStatus } from '@/domain/enterprise/entities/psych-analysis'
+import {
+  type PsychAnalysisProfileSnapshot,
+  PsychAnalysisStatus,
+} from '@/domain/enterprise/entities/psych-analysis'
 
 @Entity('psych_analyses')
 @Index(['profileId'], { unique: true })
@@ -20,6 +23,15 @@ export class PsychAnalysis {
 
   @Column({ name: 'profile_id', type: 'uuid' })
   profileId: string
+
+  @Column({ name: 'vacancy_id', type: 'uuid', nullable: true })
+  vacancyId: string | null
+
+  @Column({ name: 'criteria_version', type: 'integer', nullable: true })
+  criteriaVersion: number | null
+
+  @Column({ name: 'profile_snapshot', type: 'jsonb', nullable: true })
+  profileSnapshot: PsychAnalysisProfileSnapshot | null
 
   @Column({ type: 'varchar' })
   status: PsychAnalysisStatus

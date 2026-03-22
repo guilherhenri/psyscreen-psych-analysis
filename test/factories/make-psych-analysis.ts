@@ -1,6 +1,7 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import {
   PsychAnalysis,
+  type PsychAnalysisProfileSnapshot,
   PsychAnalysisStatus,
 } from '@/domain/enterprise/entities/psych-analysis'
 
@@ -8,6 +9,9 @@ export function makePsychAnalysis(
   override?: Partial<{
     candidateId: string
     profileId: string
+    vacancyId?: string | null
+    criteriaVersion?: number | null
+    profileSnapshot?: PsychAnalysisProfileSnapshot | null
     status: PsychAnalysisStatus
     score: number | null
     report: string | null

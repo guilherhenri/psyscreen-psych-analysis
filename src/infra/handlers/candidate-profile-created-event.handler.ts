@@ -17,6 +17,7 @@ export class CandidateProfileCreatedEventHandler {
       await this.runPsychAnalysis.execute({
         candidateId: event.candidateId,
         profileId: event.profileId,
+        vacancyId: event.vacancyId ?? null,
         summary: event.summary,
         experiences: event.experiences,
         education: event.education,

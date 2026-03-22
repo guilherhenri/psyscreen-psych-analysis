@@ -10,9 +10,22 @@ export enum PsychAnalysisStatus {
   FAILED = 'failed',
 }
 
+export interface PsychAnalysisProfileSnapshot {
+  summary: string | null
+  experiences: string[]
+  education: string[]
+  skills: string[]
+  languages: string[]
+  certifications: string[]
+  rawText: string
+}
+
 interface PsychAnalysisProps {
   candidateId: string
   profileId: string
+  vacancyId?: string | null
+  criteriaVersion?: number | null
+  profileSnapshot?: PsychAnalysisProfileSnapshot | null
   status: PsychAnalysisStatus
   score?: number | null
   report?: string | null
@@ -27,6 +40,18 @@ export class PsychAnalysis extends AggregateRoot<PsychAnalysisProps> {
 
   get profileId() {
     return this.props.profileId
+  }
+
+  get vacancyId() {
+    return this.props.vacancyId
+  }
+
+  get criteriaVersion() {
+    return this.props.criteriaVersion
+  }
+
+  get profileSnapshot() {
+    return this.props.profileSnapshot
   }
 
   get status() {
@@ -70,6 +95,26 @@ export class PsychAnalysis extends AggregateRoot<PsychAnalysisProps> {
 
   private touch() {
     this.props.updatedAt = new Date()
+  }
+
+  updateContext(params: {
+    vacancyId?: string | null
+    criteriaVersion?: number | null
+  }) {
+    if (params.vacancyId !== undefined) {
+      this.props.vacancyId = params.vacancyId
+    }
+
+    if (params.criteriaVersion !== undefined) {
+      this.props.criteriaVersion = params.criteriaVersion
+    }
+
+    this.touch()
+  }
+
+  updateProfileSnapshot(snapshot: PsychAnalysisProfileSnapshot) {
+    this.props.profileSnapshot = snapshot
+    this.touch()
   }
 
   static create(

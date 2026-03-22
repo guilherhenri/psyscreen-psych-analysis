@@ -90,12 +90,13 @@ The service listens to the following Kafka topics:
 | Topic                              | Handler                                   | Description                       |
 | ---------------------------------- | ----------------------------------------- | --------------------------------- |
 | `candidates.event.profile_created` | `candidate-profile-created-event.handler` | Candidate profile created payload |
+| `vacancies.event.criteria_updated` | `vacancy-criteria-updated-event.handler`  | Vacancy criteria updated payload  |
 
 The service will publish:
 
-| Topic                            | Description                      |
-| -------------------------------- | -------------------------------- |
-| `psych-analysis.event.completed` | Psych analysis completed payload |
+| Topic                            | Description                                                               |
+| -------------------------------- | ------------------------------------------------------------------------- |
+| `psych-analysis.event.completed` | Psych analysis completed payload (optional `vacancyId`/`criteriaVersion`) |
 
 **Consumer Group:** `psych-analysis-consumer`
 
